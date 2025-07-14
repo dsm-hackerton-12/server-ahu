@@ -14,3 +14,6 @@ spring:
         format_sql: ${JPA_FORMAT_SQL}
         dialect: org.hibernate.dialect.MySQLDialect
     open-in-view: false
+  jwt:
+    secret: ${JWT_SECRET}
+    expiration: ${JWT_EXPIRATION:86400000}
