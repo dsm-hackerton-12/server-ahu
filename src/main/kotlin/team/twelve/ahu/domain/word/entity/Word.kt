@@ -16,10 +16,10 @@ class Word(
     val id: UUID = UUID.randomUUID(),
 
     @Column(name= "word")
-    val word: String,
+    val word: String = "",
 
     @Column(name="description")
-    val description: String,
+    val description: String = "",
 
     @Column(name = "create_time")
     val createTime: LocalDateTime = LocalDateTime.now(),

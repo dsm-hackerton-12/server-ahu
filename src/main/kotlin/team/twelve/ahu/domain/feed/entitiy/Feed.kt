@@ -14,18 +14,17 @@ import java.util.UUID
 @Entity(name = "feed")
 data class Feed(
     @Id
-    @GeneratedValue
     @Column(name="feed_id")
     @NotNull
     val id: UUID = UUID.randomUUID(),
 
     @Column(name = "description")
     @NotNull
-    val description: String,
+    val description: String = "",
 
     @Column(name = "author")
     @NotNull
-    val author: String,
+    val author: String = "",
 
     @Column(name = "create_time")
     @NotNull
@@ -38,7 +37,7 @@ data class Feed(
     @ManyToOne
     @NotNull
     @JoinColumn(name = "word_id")
-    val word: Word
+    val word: Word = Word()
 ) {
 
 }
