@@ -1,5 +1,6 @@
 package team.twelve.ahu.domain.feed.presentation.controller
 
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -11,6 +12,7 @@ import team.twelve.ahu.domain.feed.presentation.dto.response.ReadAllFeedResponse
 import team.twelve.ahu.domain.feed.presentation.dto.response.ReadFeedResponse
 import team.twelve.ahu.domain.feed.service.CreateFeedService
 import team.twelve.ahu.domain.feed.service.ReadAllFeedService
+import team.twelve.ahu.domain.feed.service.ReadAllService
 import team.twelve.ahu.domain.feed.service.ReadFeedService
 import java.util.UUID
 
@@ -20,10 +22,11 @@ class FeedController(
     private val createFeedService: CreateFeedService,
     private val readFeedService: ReadFeedService,
     private val readAllFeedService: ReadAllFeedService,
+    private val readAllService: ReadAllService
 ) {
     @GetMapping
-    fun findAll() {
-
+    fun findAll() : ReadAllFeedResponse {
+        return readAllService.readAllFeed()
     }
 
     @GetMapping("/{id}")
