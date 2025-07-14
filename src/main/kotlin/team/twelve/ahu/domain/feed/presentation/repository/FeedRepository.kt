@@ -5,6 +5,6 @@ import team.twelve.ahu.domain.feed.entitiy.Feed
 import java.util.UUID
 
 interface FeedRepository : CrudRepository<Feed, UUID> {
-    fun findFeedById(id: UUID): Feed?
+    fun findFeedById(id: UUID): Feed
     fun save(feed: Feed)
 }
