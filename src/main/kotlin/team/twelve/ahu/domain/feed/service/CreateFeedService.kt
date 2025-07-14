@@ -16,8 +16,8 @@ class CreateFeedService(
     private val wordRepository: WordRepository
 ) {
     @Transactional
-    fun execute(request: CreateFeedRequest, wordId: UUID) {
-        val word: Word = wordRepository.findWordById(wordId)
+    fun execute(request: CreateFeedRequest, id: UUID) {
+        val word: Word = wordRepository.findWordById(id)
 
         val feed = Feed(
             description = request.description,
