@@ -1,4 +1,4 @@
-package team.twelve.ahu.domain.word.presentation.repository
+package team.twelve.ahu.domain.word.entity.repository
 
 import org.springframework.data.repository.CrudRepository
 import team.twelve.ahu.domain.word.entity.Word

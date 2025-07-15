@@ -6,7 +6,7 @@ import team.twelve.ahu.domain.feed.entitiy.Feed
 import team.twelve.ahu.domain.feed.presentation.dto.request.CreateFeedRequest
 import team.twelve.ahu.domain.feed.entitiy.repository.FeedRepository
 import team.twelve.ahu.domain.word.entity.Word
-import team.twelve.ahu.domain.word.presentation.repository.WordRepository
+import team.twelve.ahu.domain.word.entity.repository.WordRepository
 import team.twelve.ahu.global.exception.EntityNotFoundException
 import team.twelve.ahu.global.exception.InvalidRequestException
 import java.time.LocalDateTime
