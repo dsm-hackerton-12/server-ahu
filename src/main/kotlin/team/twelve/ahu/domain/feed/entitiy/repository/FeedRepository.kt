@@ -6,7 +6,7 @@ import team.twelve.ahu.domain.word.entity.Word
 import java.util.UUID
 
 interface FeedRepository : CrudRepository<Feed, UUID> {
-    fun findFeedById(id: UUID): Feed
+    fun findFeedById(id: UUID): Feed?
     fun findAllByWord(word: Word): List<Feed>
     fun save(feed: Feed)
 }
