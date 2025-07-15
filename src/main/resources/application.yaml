@@ -41,3 +41,8 @@ naver:
   api:
     client-id: ${NAVER_CLIENT_ID:default_client_id}
     client-secret: ${NAVER_CLIENT_SECRET:default_client_secret}
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.security.oauth2: DEBUG

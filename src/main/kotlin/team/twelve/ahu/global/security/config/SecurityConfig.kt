@@ -3,23 +3,22 @@ package team.twelve.ahu.global.security.config
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.security.authentication.AuthenticationManager
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
-import team.twelve.ahu.domain.auth.service.UserService
-import team.twelve.ahu.domain.user.entity.repository.UserRepository
+import team.twelve.ahu.global.security.handler.CustomAuthenticationEntryPoint
+import team.twelve.ahu.global.security.handler.OAuthFailureHandler
 import team.twelve.ahu.global.security.handler.OAuthSuccessHandler
 import team.twelve.ahu.global.security.jwt.JwtAuthFilter
 import team.twelve.ahu.global.security.jwt.JwtTokenProvider
+import team.twelve.ahu.global.security.service.OAuth2UserService
 
 @Configuration
 class SecurityConfig(
     private val jwtTokenProvider: JwtTokenProvider,
     private val objectMapper: ObjectMapper,
-    private val userService: UserService
+    private val oAuth2UserService: OAuth2UserService
 ) {
 
     @Bean
@@ -33,36 +32,22 @@ class SecurityConfig(
                         "/oauth2/**",
                         "/login/**",
                         "/api/auth/signup/info",
+                        "/api/oauth2/test/**",
                         "/swagger-ui/**",
                         "/v3/api-docs/**"
                     ).permitAll()
                     .anyRequest().authenticated()
             }
             .oauth2Login {
-                it.successHandler(oAuthSuccessHandler())
+                it.successHandler(OAuthSuccessHandler(jwtTokenProvider, objectMapper, oAuth2UserService))
+                    .failureHandler(OAuthFailureHandler(objectMapper))
+            }
+            .exceptionHandling {
+                it.authenticationEntryPoint(CustomAuthenticationEntryPoint(objectMapper))
             }
 
-        http.addFilterBefore(jwtAuthFilter(), UsernamePasswordAuthenticationFilter::class.java)
+        http.addFilterBefore(JwtAuthFilter(jwtTokenProvider, oAuth2UserService), UsernamePasswordAuthenticationFilter::class.java)
 
         return http.build()
-    }
-
-    @Bean
-    fun oAuthSuccessHandler(): OAuthSuccessHandler {
-        return OAuthSuccessHandler(
-            jwtTokenProvider = jwtTokenProvider,
-            objectMapper = objectMapper,
-            userService = userService
-        )
-    }
-
-    @Bean
-    fun jwtAuthFilter(): JwtAuthFilter {
-        return JwtAuthFilter(jwtTokenProvider, userService)
-    }
-
-    @Bean
-    fun authenticationManager(authConfig: AuthenticationConfiguration): AuthenticationManager {
-        return authConfig.authenticationManager
     }
 }

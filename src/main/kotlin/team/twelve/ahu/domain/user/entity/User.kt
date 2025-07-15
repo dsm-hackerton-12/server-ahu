@@ -9,8 +9,8 @@ data class User(
     @Column(name = "user_id", columnDefinition = "BINARY(16)")
     val id: UUID = UUID.randomUUID(),
 
-    @Column(name = "google_sub", nullable = false, unique = true)
-    val googleSub: String,
+    @Column(name = "google_sub", nullable = true, unique = true)
+    val googleSub: String?,
 
     @Column(name = "email", nullable = false)
     val email: String,
@@ -19,7 +19,7 @@ data class User(
     var name: String? = null
 
 ) {
-    constructor() : this(UUID.randomUUID(), "", "", null)
+    constructor() : this(UUID.randomUUID(), null, "", null)
 
-    constructor(email: String, name: String) : this(UUID.randomUUID(), "", email, name)
+    constructor(email: String, name: String) : this(UUID.randomUUID(), null, email, name)
 }

@@ -1,5 +1,6 @@
 package team.twelve.ahu.global.security.jwt
 
+import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import io.jsonwebtoken.security.Keys
@@ -16,7 +17,7 @@ class JwtTokenProvider(
 ) {
     private val secretKey: SecretKey = Keys.hmacShaKeyFor(secret.toByteArray())
 
-    fun generateToken(user: User): String{
+    fun generateToken(user: User): String {
         val now = Date()
         val expiry = Date(now.time + expirationMs)
 
@@ -30,16 +31,30 @@ class JwtTokenProvider(
     }
 
     fun validateToken(token: String): Boolean = try {
-        Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token)
+        Jwts.parserBuilder()
+            .setSigningKey(secretKey)
+            .build()
+            .parseClaimsJws(token)
         true
-    } catch (e : Exception) {
+    } catch (e: Exception) {
         false
     }
 
-    fun extractUserId(token: String) : UUID {
-        val claims = Jwts.parserBuilder().setSigningKey(secretKey).build()
+    fun extractUserId(token: String): UUID {
+        val claims = Jwts.parserBuilder()
+            .setSigningKey(secretKey)
+            .build()
             .parseClaimsJws(token)
             .body
         return UUID.fromString(claims.subject)
     }
+
+    fun extractClaims(token: String): Claims {
+        return Jwts.parserBuilder()
+            .setSigningKey(secretKey)
+            .build()
+            .parseClaimsJws(token)
+            .body
+    }
+
 }

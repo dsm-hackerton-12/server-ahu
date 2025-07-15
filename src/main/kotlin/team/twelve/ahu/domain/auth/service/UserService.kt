@@ -14,9 +14,15 @@ class UserService (
             ?: userRepository.save(User(email = email, name = name))
     }
 
-    fun findByGoogleSub(googleSub: String, email: String): User {
+    fun findByGoogleSub(googleSub: String?, email: String): User {
         return userRepository.findByGoogleSub(googleSub)
             ?: userRepository.save(User(googleSub = googleSub, email = email, name = null))
+    }
+
+    fun findOrCreateUserByOAuth2(googleSub: String?, email: String, name: String?): User {
+        return userRepository.findByGoogleSub(googleSub)
+            ?: userRepository.findByEmail(email)
+            ?: userRepository.save(User(googleSub = googleSub, email = email, name = name))
     }
 
     fun findByEmail(email: String): User? =

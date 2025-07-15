@@ -1,5 +1,6 @@
 package team.twelve.ahu.domain.auth.service
 
+import org.springframework.context.annotation.Lazy
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User
@@ -9,9 +10,9 @@ import team.twelve.ahu.domain.user.entity.User
 import team.twelve.ahu.domain.user.entity.repository.UserRepository
 import team.twelve.ahu.global.security.jwt.JwtTokenProvider
 
-@Service
+// @Service - 순환 참조 방지를 위해 비활성화
 class OauthUserService(
-    private val userService: UserService,
+    @Lazy private val userService: UserService,
     private val jwtTokenProvider: JwtTokenProvider,
 ) : DefaultOAuth2UserService() {
 

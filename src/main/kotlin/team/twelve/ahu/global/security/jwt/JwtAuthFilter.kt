@@ -1,50 +1,65 @@
 package team.twelve.ahu.global.security.jwt
 
 import jakarta.servlet.FilterChain
+import jakarta.servlet.ServletException
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
-import org.springframework.security.web.authentication.WebAuthenticationDetails
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
-import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
-import team.twelve.ahu.domain.auth.service.UserService
+import team.twelve.ahu.global.security.service.OAuth2UserService
+import java.io.IOException
 
-@Component
 class JwtAuthFilter(
-    private val jwtTokenProvider : JwtTokenProvider,
-    private val userService : UserService
-): OncePerRequestFilter() {
+    private val jwtTokenProvider: JwtTokenProvider,
+    private val oAuth2UserService: OAuth2UserService
+) : OncePerRequestFilter() {
 
+    @Throws(ServletException::class, IOException::class)
     override fun doFilterInternal(
         request: HttpServletRequest,
         response: HttpServletResponse,
         filterChain: FilterChain
     ) {
-        val token = extractToken(request)
+        try {
+            val token = extractToken(request)
 
-        if (token != null && jwtTokenProvider.validateToken(token)) {
-            val userId = jwtTokenProvider.extractUserId(token)
-            val user = userService.findById(userId)
-
-            val authentication = UsernamePasswordAuthenticationToken(
-                user, null, emptyList()
-            ).apply {
-                details = WebAuthenticationDetailsSource().buildDetails(request)
+            if (!token.isNullOrBlank() && jwtTokenProvider.validateToken(token)) {
+                authenticateUser(token)
             }
-
-            SecurityContextHolder.getContext().authentication = authentication
+        } catch (e: Exception) {
+            SecurityContextHolder.clearContext()
+            logger.debug("JWT authentication failed: ${e.message}")
         }
 
         filterChain.doFilter(request, response)
     }
 
-    private fun extractToken(request: HttpServletRequest): String?{
-        val header = request.getHeader("Authorization")
-        return if (header != null && header.startsWith("Bearer ")){
-            header.substring(7)
-        } else null
+    private fun authenticateUser(token: String) {
+        try {
+            val userId = jwtTokenProvider.extractUserId(token)
+            val user = oAuth2UserService.findById(userId)
+            
+            if (user != null) {
+                val authentication = UsernamePasswordAuthenticationToken(
+                    user, null, emptyList()
+                )
+                SecurityContextHolder.getContext().authentication = authentication
+            }
+        } catch (e: Exception) {
+            logger.debug("User authentication failed: ${e.message}")
+            SecurityContextHolder.clearContext()
+        }
+    }
+
+    private fun extractToken(request: HttpServletRequest): String? {
+        return try {
+            val bearerToken = request.getHeader("Authorization")
+            if (bearerToken?.startsWith("Bearer ") == true) {
+                bearerToken.substring(7)
+            } else null
+        } catch (e: Exception) {
+            null
+        }
     }
 }
