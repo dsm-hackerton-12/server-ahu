@@ -1,18 +1,21 @@
 package team.twelve.ahu.domain.feed.presentation.controller
 
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import team.twelve.ahu.domain.feed.presentation.dto.request.CreateFeedRequest
+import team.twelve.ahu.domain.feed.presentation.dto.request.UpdateFeedRequest
 import team.twelve.ahu.domain.feed.presentation.dto.response.ReadAllFeedResponse
 import team.twelve.ahu.domain.feed.presentation.dto.response.ReadFeedResponse
 import team.twelve.ahu.domain.feed.service.CreateFeedService
 import team.twelve.ahu.domain.feed.service.ReadAllFeedService
 import team.twelve.ahu.domain.feed.service.ReadAllService
 import team.twelve.ahu.domain.feed.service.ReadFeedService
+import team.twelve.ahu.domain.feed.service.UpdateFeedService
 import java.util.UUID
 
 @RestController
@@ -21,7 +24,8 @@ class FeedController(
     private val createFeedService: CreateFeedService,
     private val readFeedService: ReadFeedService,
     private val readAllFeedService: ReadAllFeedService,
-    private val readAllService: ReadAllService
+    private val readAllService: ReadAllService,
+    private val updateFeedService: UpdateFeedService,
 ) {
     @GetMapping
     fun findAll() : ReadAllFeedResponse {
@@ -42,5 +46,10 @@ class FeedController(
     @PostMapping("/{id}")
     fun createFeed(@PathVariable id: UUID, @RequestBody request: CreateFeedRequest) {
         createFeedService.execute(request, id)
+    }
+
+    @PatchMapping("/{id}")
+    fun update(@PathVariable id: UUID, @RequestBody request: UpdateFeedRequest) {
+        updateFeedService.updateFeed(id, request)
     }
 }
