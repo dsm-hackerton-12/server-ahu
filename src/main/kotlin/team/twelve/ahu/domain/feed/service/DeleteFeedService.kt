@@ -3,7 +3,7 @@ package team.twelve.ahu.domain.feed.service
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.PathVariable
-import team.twelve.ahu.domain.feed.presentation.repository.FeedRepository
+import team.twelve.ahu.domain.feed.entitiy.repository.FeedRepository
 import java.util.UUID
 
 @Service

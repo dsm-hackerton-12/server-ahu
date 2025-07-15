@@ -1,4 +1,4 @@
-package team.twelve.ahu.domain.feed.presentation.repository
+package team.twelve.ahu.domain.feed.entitiy.repository
 
 import org.springframework.data.repository.CrudRepository
 import team.twelve.ahu.domain.feed.entitiy.Feed

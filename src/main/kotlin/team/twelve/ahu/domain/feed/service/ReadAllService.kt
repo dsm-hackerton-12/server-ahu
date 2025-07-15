@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import team.twelve.ahu.domain.feed.presentation.dto.response.ReadAllFeedResponse
 import team.twelve.ahu.domain.feed.presentation.dto.response.ReadFeedResponse
-import team.twelve.ahu.domain.feed.presentation.repository.FeedRepository
+import team.twelve.ahu.domain.feed.entitiy.repository.FeedRepository
 
 @Service
 class ReadAllService(
