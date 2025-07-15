@@ -20,6 +20,7 @@ class SecurityConfig(
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
         http
             .csrf { it.disable() }
+            .formLogin { it.disable() }
             .authorizeHttpRequests {
                 it.requestMatchers("/", "/login**", "/oauth2/**", "/error").permitAll()
                     .anyRequest().authenticated()
