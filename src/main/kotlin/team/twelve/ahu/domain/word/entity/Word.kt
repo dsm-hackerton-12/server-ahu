@@ -1,5 +1,6 @@
 package team.twelve.ahu.domain.word.entity
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -29,6 +30,7 @@ class Word(
 
 
     @OneToMany(mappedBy = "word", cascade = [CascadeType.ALL], orphanRemoval = true)
+    @JsonIgnore
     val feeds: List<Feed> = emptyList(),
 ) {
 
