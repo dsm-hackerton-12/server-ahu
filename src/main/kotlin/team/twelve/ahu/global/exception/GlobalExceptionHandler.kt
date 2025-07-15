@@ -79,7 +79,7 @@ class GlobalExceptionHandler {
     @ExceptionHandler(Exception::class)
     fun handleGenericException(exception: Exception): ResponseEntity<ErrorResponse> {
         val errorResponse = ErrorResponse(
-            message = "서버 내부 오류가 발생했습니다: ${exception.message}",
+            message = "클라이언트 잘못이 100% : ${exception.message}",
             status = HttpStatus.INTERNAL_SERVER_ERROR.value(),
             error = HttpStatus.INTERNAL_SERVER_ERROR.reasonPhrase
         )
