@@ -5,5 +5,7 @@ import team.twelve.ahu.domain.word.entity.Word
 import java.util.UUID
 
 interface WordRepository : CrudRepository<Word, UUID> {
-    fun findWordById(id: UUID): Word
+    fun findWordById(id: UUID): Word?
+    fun findByWord(word: String): Word?
+    fun findAllByWord(word: String): List<Word>
 }
