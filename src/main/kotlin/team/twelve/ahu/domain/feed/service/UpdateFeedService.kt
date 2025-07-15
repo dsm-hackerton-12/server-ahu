@@ -12,7 +12,7 @@ class UpdateFeedService(
     private val feedRepository: FeedRepository,
 ) {
     @Transactional
-    fun updateFeed(id: UUID, request: UpdateFeedRequest) {
+    fun execute(id: UUID, request: UpdateFeedRequest) {
         val feed = feedRepository.findFeedById(id)
         val updatedFeed = feed.copy(
             description = request.description,

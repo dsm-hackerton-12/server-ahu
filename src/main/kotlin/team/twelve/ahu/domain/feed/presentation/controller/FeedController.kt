@@ -1,5 +1,6 @@
 package team.twelve.ahu.domain.feed.presentation.controller
 
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -12,6 +13,7 @@ import team.twelve.ahu.domain.feed.presentation.dto.request.UpdateFeedRequest
 import team.twelve.ahu.domain.feed.presentation.dto.response.ReadAllFeedResponse
 import team.twelve.ahu.domain.feed.presentation.dto.response.ReadFeedResponse
 import team.twelve.ahu.domain.feed.service.CreateFeedService
+import team.twelve.ahu.domain.feed.service.DeleteFeedService
 import team.twelve.ahu.domain.feed.service.ReadAllFeedService
 import team.twelve.ahu.domain.feed.service.ReadAllService
 import team.twelve.ahu.domain.feed.service.ReadFeedService
@@ -26,6 +28,7 @@ class FeedController(
     private val readAllFeedService: ReadAllFeedService,
     private val readAllService: ReadAllService,
     private val updateFeedService: UpdateFeedService,
+    private val deleteFeedService: DeleteFeedService
 ) {
     @GetMapping
     fun findAll() : ReadAllFeedResponse {
@@ -50,6 +53,11 @@ class FeedController(
 
     @PatchMapping("/{id}")
     fun update(@PathVariable id: UUID, @RequestBody request: UpdateFeedRequest) {
-        updateFeedService.updateFeed(id, request)
+        updateFeedService.execute(id, request)
+    }
+
+    @DeleteMapping("/{id}")
+    fun delete(@PathVariable id: UUID) {
+        deleteFeedService.execute(id)
     }
 }
