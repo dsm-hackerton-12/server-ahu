@@ -22,7 +22,7 @@ class CreateFeedService(
         if (request.description.isBlank()) {
             throw InvalidRequestException("피드 내용은 비어있을 수 없습니다.")
         }
-        if (request.author.isBlank()) {
+        if (request.author.name.isNullOrBlank()) {
             throw InvalidRequestException("작성자는 비어있을 수 없습니다.")
         }
         

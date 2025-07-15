@@ -6,13 +6,14 @@ import jakarta.servlet.http.HttpServletResponse
 import org.springframework.security.core.Authentication
 import org.springframework.security.oauth2.core.user.OAuth2User
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler
+import team.twelve.ahu.domain.auth.service.UserService
 import team.twelve.ahu.domain.user.entity.repository.UserRepository
 import team.twelve.ahu.global.security.jwt.JwtTokenProvider
 
 class OAuthSuccessHandler(
     private val jwtTokenProvider: JwtTokenProvider,
     private val objectMapper: ObjectMapper,
-    private val userRepository: UserRepository
+    private val userService: UserService
 ) : AuthenticationSuccessHandler {
 
     override fun onAuthenticationSuccess(
@@ -27,7 +28,7 @@ class OAuthSuccessHandler(
         val email = oAuth2User.attributes["email"] as? String
             ?: throw IllegalArgumentException("Email not found in attributes")
 
-        val user = userRepository.findByEmail(email)
+        val user = userService.findByEmail(email)
             ?: throw IllegalStateException("User not found with email: $email")
 
         if (user.name.isNullOrBlank()) {

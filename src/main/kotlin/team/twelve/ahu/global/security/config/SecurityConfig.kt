@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
+import team.twelve.ahu.domain.auth.service.UserService
 import team.twelve.ahu.domain.user.entity.repository.UserRepository
 import team.twelve.ahu.global.security.handler.OAuthSuccessHandler
 import team.twelve.ahu.global.security.jwt.JwtAuthFilter
@@ -18,7 +19,7 @@ import team.twelve.ahu.global.security.jwt.JwtTokenProvider
 class SecurityConfig(
     private val jwtTokenProvider: JwtTokenProvider,
     private val objectMapper: ObjectMapper,
-    private val userRepository: UserRepository
+    private val userService: UserService
 ) {
 
     @Bean
@@ -51,13 +52,13 @@ class SecurityConfig(
         return OAuthSuccessHandler(
             jwtTokenProvider = jwtTokenProvider,
             objectMapper = objectMapper,
-            userRepository = userRepository
+            userService = userService
         )
     }
 
     @Bean
     fun jwtAuthFilter(): JwtAuthFilter {
-        return JwtAuthFilter(jwtTokenProvider, userRepository)
+        return JwtAuthFilter(jwtTokenProvider, userService)
     }
 
     @Bean

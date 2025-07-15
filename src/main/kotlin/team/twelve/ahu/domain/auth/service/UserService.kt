@@ -14,6 +14,14 @@ class UserService (
             ?: userRepository.save(User(email = email, name = name))
     }
 
+    fun findByGoogleSub(googleSub: String, email: String): User {
+        return userRepository.findByGoogleSub(googleSub)
+            ?: userRepository.save(User(googleSub = googleSub, email = email, name = null))
+    }
+
+    fun findByEmail(email: String): User? =
+        userRepository.findByEmail(email)
+
     fun findById(id : UUID): User =
         userRepository.findById(id).orElseThrow {NoSuchElementException("User not found")}
 }
