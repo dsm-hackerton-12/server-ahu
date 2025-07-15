@@ -1,49 +1,67 @@
 package team.twelve.ahu.global.security.config
 
-import jakarta.servlet.http.HttpServletResponse
-import org.springframework.boot.autoconfigure.graphql.GraphQlProperties.Http
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
-import org.springframework.security.oauth2.core.user.OAuth2User
+import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
-import team.twelve.ahu.domain.auth.service.OauthUserService
+import team.twelve.ahu.domain.user.entity.repository.UserRepository
+import team.twelve.ahu.global.security.handler.OAuthSuccessHandler
 import team.twelve.ahu.global.security.jwt.JwtAuthFilter
+import team.twelve.ahu.global.security.jwt.JwtTokenProvider
 
 @Configuration
 class SecurityConfig(
-    private val oAuthUserService: OauthUserService,
-    private val jwtAuthFilter: JwtAuthFilter
+    private val jwtTokenProvider: JwtTokenProvider,
+    private val objectMapper: ObjectMapper,
+    private val userRepository: UserRepository
 ) {
+
     @Bean
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
         http
             .csrf { it.disable() }
-            .formLogin { it.disable() }
+            .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .authorizeHttpRequests {
-                it.requestMatchers("/", "/login**", "/oauth2/**", "/error").permitAll()
+                it
+                    .requestMatchers(
+                        "/oauth2/**",
+                        "/login/**",
+                        "/api/auth/signup/info",
+                        "/swagger-ui/**",
+                        "/v3/api-docs/**"
+                    ).permitAll()
                     .anyRequest().authenticated()
             }
             .oauth2Login {
-                it.userInfoEndpoint {endpoint ->
-                    endpoint.userService(oAuthUserService)
-                }.successHandler { _, response, authentication ->
-                    val user = authentication.principal as OAuth2User
-                    val token = user.getAttribute<String>("accessToken")
+                it.successHandler(oAuthSuccessHandler())
+            }
 
-                    response.contentType = "application/json"
-                    response.characterEncoding = "UTF-8"
-                    response.writer.write("""{ "accessToken": "$token" }""")
-                }
-            }
-            .exceptionHandling {
-                it.authenticationEntryPoint { _, response, _ ->
-                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized")
-                }
-            }
-        http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter::class.java)
+        http.addFilterBefore(jwtAuthFilter(), UsernamePasswordAuthenticationFilter::class.java)
 
         return http.build()
+    }
+
+    @Bean
+    fun oAuthSuccessHandler(): OAuthSuccessHandler {
+        return OAuthSuccessHandler(
+            jwtTokenProvider = jwtTokenProvider,
+            objectMapper = objectMapper,
+            userRepository = userRepository
+        )
+    }
+
+    @Bean
+    fun jwtAuthFilter(): JwtAuthFilter {
+        return JwtAuthFilter(jwtTokenProvider, userRepository)
+    }
+
+    @Bean
+    fun authenticationManager(authConfig: AuthenticationConfiguration): AuthenticationManager {
+        return authConfig.authenticationManager
     }
 }

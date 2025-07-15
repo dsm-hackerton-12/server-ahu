@@ -7,7 +7,7 @@ import team.twelve.ahu.domain.feed.presentation.dto.response.ReadFeedResponse
 import team.twelve.ahu.domain.feed.entitiy.repository.FeedRepository
 
 @Service
-class ReadAllService(
+class   ReadAllService(
     private val feedRepository: FeedRepository,
 ) {
     @Transactional
