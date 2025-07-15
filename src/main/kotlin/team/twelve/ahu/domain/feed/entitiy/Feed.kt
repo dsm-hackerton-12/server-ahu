@@ -7,6 +7,7 @@ import jakarta.persistence.Id
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.JoinColumn
 import org.jetbrains.annotations.NotNull
+import team.twelve.ahu.domain.user.entity.User
 import team.twelve.ahu.domain.word.entity.Word
 import java.time.LocalDateTime
 import java.util.UUID
@@ -23,8 +24,9 @@ data class Feed(
     val description: String = "",
 
     @Column(name = "author")
+    @ManyToOne
     @NotNull
-    val author: String = "",
+    val author: User,
 
     @Column(name = "create_time")
     @NotNull

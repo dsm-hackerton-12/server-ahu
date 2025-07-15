@@ -5,7 +5,7 @@ import io.jsonwebtoken.SignatureAlgorithm
 import io.jsonwebtoken.security.Keys
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
-import team.twelve.ahu.domain.auth.entity.User
+import team.twelve.ahu.domain.user.entity.User
 import java.util.*
 import javax.crypto.SecretKey
 

@@ -5,14 +5,14 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User
 import org.springframework.security.oauth2.core.user.OAuth2User
 import org.springframework.stereotype.Service
-import team.twelve.ahu.domain.auth.entity.User
+import team.twelve.ahu.domain.user.entity.User
 import team.twelve.ahu.global.security.jwt.JwtTokenProvider
 
 @Service
 class OauthUserService(
     private val userService: UserService,
-    private val jwtTokenProvider: JwtTokenProvider
-): DefaultOAuth2UserService() {
+    private val jwtTokenProvider: JwtTokenProvider,
+) : DefaultOAuth2UserService() {
 
     override fun loadUser(userRequest: OAuth2UserRequest?): OAuth2User {
         val oAuth2User = super.loadUser(userRequest)
@@ -21,9 +21,10 @@ class OauthUserService(
         val email = attributes["email"] as? String
             ?: throw IllegalArgumentException("Email not found in Google Profile")
 
-        val name = attributes["name"] as? String ?: "Anonymous"
+        val sub = attributes["sub"] as? String
+            ?: throw IllegalArgumentException("Google sub ID not found")
 
-        val user: User = userService.findOrCreateUser(email, name)
+        val user: User = userService.findByGoogleSub(sub, email)
 
         val token = jwtTokenProvider.generateToken(user)
 

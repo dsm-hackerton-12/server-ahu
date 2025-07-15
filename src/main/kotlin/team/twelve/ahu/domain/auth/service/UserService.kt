@@ -1,8 +1,8 @@
 package team.twelve.ahu.domain.auth.service
 
 import org.springframework.stereotype.Service
-import team.twelve.ahu.domain.auth.entity.User
-import team.twelve.ahu.domain.auth.presentation.repository.UserRepository
+import team.twelve.ahu.domain.user.entity.User
+import team.twelve.ahu.domain.user.entity.repository.UserRepository
 import java.util.*
 
 @Service
