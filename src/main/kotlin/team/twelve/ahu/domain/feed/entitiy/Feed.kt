@@ -23,7 +23,7 @@ data class Feed(
     @NotNull
     val description: String = "",
 
-    @Column(name = "author")
+    @JoinColumn(name = "author_id")
     @ManyToOne
     @NotNull
     val author: User,
