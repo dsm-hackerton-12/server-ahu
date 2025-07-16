@@ -1,13 +1,12 @@
 package team.twelve.ahu.domain.like.presentation
 
-import org.springframework.http.ResponseEntity
-import org.springframework.security.core.Authentication
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.web.bind.annotation.*
 import team.twelve.ahu.domain.like.presentation.dto.LikeResponse
 import team.twelve.ahu.domain.like.service.LikeService
 import java.util.*
 
-
+@Tag(name = "Like", description = "좋아요 API")
 @RestController
 @RequestMapping("/likes")
 class LikeController(
