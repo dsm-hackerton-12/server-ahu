@@ -1,14 +1,16 @@
 package team.twelve.ahu.domain.like.entity
 
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.FetchType
-import jakarta.persistence.ManyToOne
+import jakarta.persistence.*
 import team.twelve.ahu.domain.feed.entitiy.Feed
 import team.twelve.ahu.domain.user.entity.User
+import java.util.*
 
-@Entity(name = "like")
+@Entity(name = "user_like")
 data class Like(
+    @Id
+    @GeneratedValue
+    @Column(name = "like_id", columnDefinition = "BINARY(16)")
+    val id: UUID = UUID.randomUUID(),
 
     @ManyToOne(fetch = FetchType.LAZY)
     val feed : Feed,
