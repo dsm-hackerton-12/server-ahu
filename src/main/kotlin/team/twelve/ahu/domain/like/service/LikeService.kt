@@ -7,17 +7,28 @@ import team.twelve.ahu.domain.like.entity.Like
 import team.twelve.ahu.domain.like.entity.repository.LikeRepository
 import team.twelve.ahu.domain.like.presentation.dto.LikeResponse
 import team.twelve.ahu.domain.user.entity.repository.UserRepository
+import team.twelve.ahu.global.security.jwt.JwtTokenProvider
 import java.util.*
 
 @Service
 class LikeService(
     private val likeRepository: LikeRepository,
     private val userRepository: UserRepository,
-    private val feedRepository: FeedRepository
+    private val feedRepository: FeedRepository,
+    private val jwtTokenProvider: JwtTokenProvider
 ) {
 
     @Transactional
-    fun toggleLike(userId: UUID, feedId: UUID): LikeResponse {
+    fun toggleLike(token: String, feedId: UUID): LikeResponse {
+
+        val cleanToken = if (token.startsWith("Bearer ")) {
+            token.substring(7)
+        } else {
+            token
+        }
+
+        val userId = jwtTokenProvider.extractUserId(cleanToken)
+
         val user = userRepository.findUserById(userId)
         val feed = feedRepository.findById(feedId)
             .orElseThrow { IllegalArgumentException("Feed not found") }

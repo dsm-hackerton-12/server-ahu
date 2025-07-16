@@ -16,10 +16,8 @@ class LikeController(
     @PostMapping("/{feedId}")
     fun toggleLike(
         @PathVariable feedId: UUID,
-        authentication: Authentication
-    ): ResponseEntity<LikeResponse> {
-        val userId = UUID.fromString(authentication.name)
-        val response = likeService.toggleLike(userId, feedId)
-        return ResponseEntity.ok(response)
+        @RequestHeader("Authorization") token: String,
+    ): LikeResponse {
+        return likeService.toggleLike(token, feedId)
     }
 }
