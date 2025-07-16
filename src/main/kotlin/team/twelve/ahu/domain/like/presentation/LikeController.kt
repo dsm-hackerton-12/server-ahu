@@ -7,6 +7,7 @@ import team.twelve.ahu.domain.like.presentation.dto.LikeResponse
 import team.twelve.ahu.domain.like.service.LikeService
 import java.util.*
 
+
 @RestController
 @RequestMapping("/likes")
 class LikeController(

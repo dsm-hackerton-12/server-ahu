@@ -20,29 +20,24 @@ class LikeService(
 
     @Transactional
     fun toggleLike(token: String, feedId: UUID): LikeResponse {
-
-        val cleanToken = if (token.startsWith("Bearer ")) {
-            token.substring(7)
-        } else {
-            token
-        }
-
+        val cleanToken = token.removePrefix("Bearer ")
         val userId = jwtTokenProvider.extractUserId(cleanToken)
-
         val user = userRepository.findUserById(userId)
         val feed = feedRepository.findById(feedId)
             .orElseThrow { IllegalArgumentException("Feed not found") }
 
         val existingLike = likeRepository.findByUserAndFeed(user, feed)
 
-        return if (existingLike != null) {
+        if (existingLike != null) {
             likeRepository.delete(existingLike)
-            LikeResponse(likeCount = null, likeStatus = false)
         } else {
-            val like = likeRepository.save(
-                Like(feed = feed, user = user, likeCount = 1, likeStatus = true)
-            )
-            LikeResponse(likeCount = like, likeStatus = true)
+            likeRepository.save(Like(feed = feed, user = user))
         }
+
+        val likeCount = likeRepository.countByFeed(feed)
+        val likeStatus = likeRepository.existsByUserAndFeed(user, feed)
+
+        return LikeResponse(likeCount = likeCount, likeStatus = likeStatus)
     }
+
 }

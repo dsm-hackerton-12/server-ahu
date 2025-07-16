@@ -8,7 +8,6 @@ import java.util.*
 @Entity(name = "user_like")
 data class Like(
     @Id
-    @GeneratedValue
     @Column(name = "like_id", columnDefinition = "BINARY(16)")
     val id: UUID = UUID.randomUUID(),
 
@@ -19,10 +18,10 @@ data class Like(
     val user : User,
 
     @Column(name = "like_count")
-    val likeCount : Int,
+    val likeCount : Int = 0,
 
     @Column(name = "Boolean")
-    val likeStatus : Boolean
+    val likeStatus : Boolean = false
 ){
 
 }
