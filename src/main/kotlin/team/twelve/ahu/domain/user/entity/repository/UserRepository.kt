@@ -9,4 +9,5 @@ interface UserRepository : JpaRepository<User, UUID> {
     fun findByGoogleSub(googleSub: String?): User?
 
     fun findUserById(userId: UUID): User
+
 }
