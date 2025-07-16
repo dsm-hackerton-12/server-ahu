@@ -5,12 +5,14 @@ import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
+import org.springframework.security.core.annotation.CurrentSecurityContext
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import team.twelve.ahu.domain.feed.presentation.dto.request.CreateFeedRequest
@@ -23,6 +25,7 @@ import team.twelve.ahu.domain.feed.service.ReadAllFeedService
 import team.twelve.ahu.domain.feed.service.ReadAllService
 import team.twelve.ahu.domain.feed.service.ReadFeedService
 import team.twelve.ahu.domain.feed.service.UpdateFeedService
+import team.twelve.ahu.domain.user.entity.User
 import java.util.UUID
 
 @RestController
@@ -65,14 +68,18 @@ class FeedController(
         return readAllFeedService.execute(id)
     }
 
-    @PostMapping("/{id}")
+    @PostMapping("/{wordId}")
     @Operation(summary = "피드 생성", description = "새로운 피드를 생성합니다.")
     @ApiResponses(value = [
         ApiResponse(responseCode = "201", description = "성공적으로 생성됨"),
         ApiResponse(responseCode = "400", description = "잘못된 요청")
     ])
-    fun createFeed(@Parameter(description = "사용자 ID") @PathVariable id: UUID, @RequestBody request: CreateFeedRequest) {
-        createFeedService.execute(request, id)
+    fun createFeed(
+        @Parameter(description = "워드 ID") @PathVariable wordId: UUID,
+        @RequestHeader("Authorization") token: String,
+        @RequestBody request: CreateFeedRequest
+    ) {
+        createFeedService.execute(request, token, wordId)
     }
 
     @PatchMapping("/{id}")
