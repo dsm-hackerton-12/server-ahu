@@ -1,6 +1,5 @@
 package team.twelve.ahu.global.security.handler
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.security.core.Authentication
@@ -9,11 +8,13 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component
 import team.twelve.ahu.global.security.jwt.JwtTokenProvider
 import team.twelve.ahu.global.security.service.OAuth2UserService
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
+
 
 @Component
 class OAuthSuccessHandler(
     private val jwtTokenProvider: JwtTokenProvider,
-    private val objectMapper: ObjectMapper,
     private val oAuth2UserService: OAuth2UserService
 ) : AuthenticationSuccessHandler {
 
@@ -22,8 +23,8 @@ class OAuthSuccessHandler(
         response: HttpServletResponse?,
         authentication: Authentication?
     ) {
-        requireNotNull(response) { "response is null" }
-        requireNotNull(authentication) { "authentication is null" }
+        requireNotNull(response)
+        requireNotNull(authentication)
 
         val oAuth2User = authentication.principal as OAuth2User
         val googleSub = oAuth2User.attributes["sub"] as? String
@@ -31,20 +32,21 @@ class OAuthSuccessHandler(
             ?: throw IllegalArgumentException("Email not found in attributes")
         val name = oAuth2User.attributes["name"] as? String
 
-        // 사용자 찾기 또는 생성
         val user = oAuth2UserService.findOrCreateUserByOAuth2(googleSub, email, name)
-        
-        // 정상적인 JWT 토큰 생성
         val accessToken = jwtTokenProvider.generateToken(user)
 
-        response.contentType = "application/json;charset=UTF-8"
-        response.status = HttpServletResponse.SC_OK
-        val responseBody = mapOf(
-            "accessToken" to accessToken,
-            "email" to user.email,
-            "name" to user.name,
-            "userId" to user.id.toString()
-        )
-        objectMapper.writeValue(response.writer, responseBody)
+        // ✅ 인코딩 필수
+        val encodedEmail = URLEncoder.encode(user.email, StandardCharsets.UTF_8)
+        val encodedName = URLEncoder.encode(user.name ?: "", StandardCharsets.UTF_8)
+        val encodedUserId = URLEncoder.encode(user.id.toString(), StandardCharsets.UTF_8)
+
+        val redirectUrl =
+            "http://localhost:5173/oauth/callback" +
+                    "?accessToken=$accessToken" +
+                    "&email=$encodedEmail" +
+                    "&name=$encodedName" +
+                    "&userId=$encodedUserId"
+
+        response.sendRedirect(redirectUrl)
     }
 }

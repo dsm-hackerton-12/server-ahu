@@ -17,37 +17,40 @@ import team.twelve.ahu.global.security.service.OAuth2UserService
 @Configuration
 class SecurityConfig(
     private val jwtTokenProvider: JwtTokenProvider,
-    private val objectMapper: ObjectMapper,
-    private val oAuth2UserService: OAuth2UserService
+    private val oAuth2UserService: OAuth2UserService,
+    private val oAuthSuccessHandler: OAuthSuccessHandler,
+    private val oAuthFailureHandler: OAuthFailureHandler,
+    private val customAuthenticationEntryPoint: CustomAuthenticationEntryPoint
 ) {
-
     @Bean
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
         http
-            .cors{}
+            .cors { }
             .csrf { it.disable() }
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .authorizeHttpRequests {
-                it
-                    .requestMatchers(
-                        "/oauth2/**",
-                        "/login/**",
-                        "/api/auth/signup/info",
-                        "/api/oauth2/test/**",
-                        "/swagger-ui/**",
-                        "/v3/api-docs/**"
-                    ).permitAll()
+                it.requestMatchers(
+                    "/oauth2/**",
+                    "/login/**",
+                    "/api/auth/signup/info",
+                    "/api/oauth2/test/**",
+                    "/swagger-ui/**",
+                    "/v3/api-docs/**"
+                ).permitAll()
                     .anyRequest().authenticated()
             }
             .oauth2Login {
-                it.successHandler(OAuthSuccessHandler(jwtTokenProvider, objectMapper, oAuth2UserService))
-                    .failureHandler(OAuthFailureHandler(objectMapper))
+                it.successHandler(oAuthSuccessHandler)
+                    .failureHandler(oAuthFailureHandler)
             }
             .exceptionHandling {
-                it.authenticationEntryPoint(CustomAuthenticationEntryPoint(objectMapper))
+                it.authenticationEntryPoint(customAuthenticationEntryPoint)
             }
 
-        http.addFilterBefore(JwtAuthFilter(jwtTokenProvider, oAuth2UserService), UsernamePasswordAuthenticationFilter::class.java)
+        http.addFilterBefore(
+            JwtAuthFilter(jwtTokenProvider, oAuth2UserService),
+            UsernamePasswordAuthenticationFilter::class.java
+        )
 
         return http.build()
     }
