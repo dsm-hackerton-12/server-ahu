@@ -21,7 +21,7 @@ data class Feed(
 
     @Column(name = "description")
     @NotNull
-    val description: String = "",
+    var description: String = "",
 
     @JoinColumn(name = "author_id")
     @ManyToOne
@@ -34,7 +34,7 @@ data class Feed(
 
     @Column(name = "update_time")
     @NotNull
-    val updateTime: LocalDateTime = LocalDateTime.now(),
+    var updateTime: LocalDateTime = LocalDateTime.now(),
 
     @ManyToOne
     @NotNull
