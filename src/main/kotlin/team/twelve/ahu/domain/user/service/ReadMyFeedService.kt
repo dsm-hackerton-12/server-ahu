@@ -1,6 +1,6 @@
 package team.twelve.ahu.domain.user.service
 
-import jakarta.transaction.Transactional
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.stereotype.Service
 import team.twelve.ahu.domain.feed.entitiy.repository.FeedRepository
 import team.twelve.ahu.domain.feed.presentation.dto.response.ReadAllFeedResponse

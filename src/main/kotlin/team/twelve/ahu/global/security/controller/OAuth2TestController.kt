@@ -1,5 +1,6 @@
 package team.twelve.ahu.global.security.controller
 
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -7,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/oauth2/test")
+@Tag(name = "OAuth2 Test", description = "OAuth2 설정 테스트 API")
 class OAuth2TestController {
 
     @Value("\${spring.security.oauth2.client.registration.google.client-id:NOT_SET}")
