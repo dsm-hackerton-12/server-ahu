@@ -6,6 +6,7 @@ import team.twelve.ahu.domain.like.entity.repository.LikeRepository
 import team.twelve.ahu.domain.statistics.presentation.dto.response.KeywordStatisticsResponse
 import team.twelve.ahu.domain.statistics.presentation.dto.response.OverallStatisticsResponse
 import team.twelve.ahu.domain.word.entity.repository.WordRepository
+import java.util.UUID
 
 @Service
 class StatisticsService(
@@ -14,9 +15,9 @@ class StatisticsService(
     private val wordRepository: WordRepository
 ) {
 
-    fun getKeywordStatistics(keyword: String): KeywordStatisticsResponse {
-        val word = wordRepository.findByWord(keyword)
-            ?: throw IllegalArgumentException("Word not found: $keyword")
+    fun getKeywordStatistics(wordId: UUID): KeywordStatisticsResponse {
+        val word = wordRepository.findWordById(wordId)
+            ?: throw IllegalArgumentException("Word not found: $wordId")
         
         val aiFeeds = feedRepository.findAllByWord(word).filter { it.writtenByAi }
         val humanFeeds = feedRepository.findAllByWord(word).filter { !it.writtenByAi }
@@ -28,7 +29,7 @@ class StatisticsService(
         val avgHumanLikes = if (humanFeeds.isNotEmpty()) humanLikeCount.toDouble() / humanFeeds.size else 0.0
         
         return KeywordStatisticsResponse(
-            keyword = keyword,
+            keyword = word.word,
             aiPostCount = aiFeeds.size,
             humanPostCount = humanFeeds.size,
             totalAiLikes = aiLikeCount,

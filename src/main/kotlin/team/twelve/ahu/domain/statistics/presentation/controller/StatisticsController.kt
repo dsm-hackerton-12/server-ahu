@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController
 import team.twelve.ahu.domain.statistics.presentation.dto.response.KeywordStatisticsResponse
 import team.twelve.ahu.domain.statistics.presentation.dto.response.OverallStatisticsResponse
 import team.twelve.ahu.domain.statistics.service.StatisticsService
+import java.util.UUID
 
 @RestController
 @RequestMapping("/api/statistics")
@@ -34,11 +35,11 @@ class StatisticsController(
     )
     @ApiResponse(responseCode = "400", description = "키워드를 찾을 수 없음")
     fun getKeywordStatistics(
-        @Parameter(description = "통계를 조회할 키워드", required = true)
-        @RequestParam keyword: String
+        @Parameter(description = "통계를 조회할 단어 ID", required = true)
+        @RequestParam wordId: UUID
     ): ResponseEntity<KeywordStatisticsResponse> {
         return try {
-            val statistics = statisticsService.getKeywordStatistics(keyword)
+            val statistics = statisticsService.getKeywordStatistics(wordId)
             ResponseEntity.ok(statistics)
         } catch (e: IllegalArgumentException) {
             ResponseEntity.badRequest().build()
