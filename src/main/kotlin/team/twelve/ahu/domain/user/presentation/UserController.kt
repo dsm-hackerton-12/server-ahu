@@ -1,11 +1,10 @@
 package team.twelve.ahu.domain.user.presentation
 
 import io.swagger.v3.oas.annotations.Operation
-import io.swagger.v3.oas.annotations.headers.Header
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication
+import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -23,7 +22,6 @@ import java.util.UUID
 @RequestMapping("/user")
 @Tag(name = "User", description = "사용자 관련 API")
 class UserController(
-    private val userService: UserService,
     private val updateNameService: UpdateNameService,
     private val readMyFeedService: ReadMyFeedService
 ) {
@@ -41,7 +39,9 @@ class UserController(
         @RequestBody request: UpdateNameRequest,
         authentication: Authentication
     ) {
-        val userId = UUID.fromString(authentication.name)
+        val user = authentication.principal as team.twelve.ahu.domain.user.entity.User
+        val userId = user.id
+
         updateNameService.updateName(userId, request.name)
     }
 
