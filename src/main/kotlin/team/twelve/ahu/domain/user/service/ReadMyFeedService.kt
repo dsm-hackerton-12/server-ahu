@@ -7,15 +7,25 @@ import team.twelve.ahu.domain.feed.presentation.dto.response.ReadAllFeedResponse
 import team.twelve.ahu.domain.feed.presentation.dto.response.ReadFeedResponse
 import team.twelve.ahu.domain.user.entity.repository.UserRepository
 import team.twelve.ahu.domain.user.presentation.dto.response.MyFeedResponse
+import team.twelve.ahu.global.security.jwt.JwtTokenProvider
 import java.util.*
 
 @Service
 class ReadMyFeedService(
     private val feedRepository: FeedRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val jwtTokenProvider: JwtTokenProvider
 ) {
     @Transactional
-    fun readMyFeed(userId: UUID): MyFeedResponse {
+    fun readMyFeed(token: String): MyFeedResponse {
+
+        val cleanToken = if (token.startsWith("Bearer ")) {
+            token.substring(7)
+        } else {
+            token
+        }
+
+        val userId = jwtTokenProvider.extractUserId(cleanToken)
         val user = userRepository.findUserById(userId)
         val feeds = feedRepository.findAllByAuthor(user)
         val myFeedResponseList= feeds.map { feed ->
