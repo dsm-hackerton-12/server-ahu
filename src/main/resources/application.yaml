@@ -42,6 +42,11 @@ naver:
     client-id: ${NAVER_CLIENT_ID:default_client_id}
     client-secret: ${NAVER_CLIENT_SECRET:default_client_secret}
 
+openai:
+  api:
+    key: ${OPENAI_API_KEY}
+    model: ${OPENAI_MODEL:gpt-3.5-turbo}
+
 logging:
   level:
     org.springframework.security: DEBUG

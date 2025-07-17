@@ -11,4 +11,6 @@ interface FeedRepository : CrudRepository<Feed, UUID> {
     fun findFeedById(id: UUID): Feed?
     fun findAllByWord(word: Word): List<Feed>
     fun save(feed: Feed)
+    
+    fun existsByWordAndWrittenByAi(word: Word, writtenByAi: Boolean): Boolean
 }

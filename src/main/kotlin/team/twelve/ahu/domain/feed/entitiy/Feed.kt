@@ -36,6 +36,10 @@ data class Feed(
     @NotNull
     var updateTime: LocalDateTime = LocalDateTime.now(),
 
+    @Column(name="written_by_ai")
+    @NotNull
+    var writtenByAi: Boolean = false,
+
     @ManyToOne
     @NotNull
     @JoinColumn(name = "word_id")
