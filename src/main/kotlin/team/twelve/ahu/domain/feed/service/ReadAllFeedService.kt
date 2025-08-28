@@ -24,7 +24,8 @@ class ReadAllFeedService(
                 description = feed.description,
                 author = feed.author,
                 createTime = feed.createTime,
-                updatedTime = feed.updateTime
+                updatedTime = feed.updateTime,
+                word = feed.word.word
             )
         }
 
