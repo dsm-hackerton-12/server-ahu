@@ -31,7 +31,6 @@ class UpdateFeedService(
             throw InvalidRequestException("본인 피드만 수정할 수 있습니다.")
         }
 
-
         feed.description = request.description
         feed.updateTime = LocalDateTime.now()
     }
