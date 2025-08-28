@@ -1,5 +1,6 @@
 package team.twelve.ahu.domain.feed.service
 
+import org.springframework.data.jpa.domain.AbstractPersistable_.id
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import team.twelve.ahu.domain.feed.entitiy.Feed
@@ -46,7 +47,7 @@ class CreateFeedService(
             updateTime = LocalDateTime.now(),
             word = word
         )
-
+        feedRepository.findFeedById(id)
         feedRepository.save(feed)
     }
 }
